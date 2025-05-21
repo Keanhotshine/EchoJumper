@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public GameObject startUI;
     public Transform[] poses;
     public float[] waitTime;
+    public float[] waitTimeLvl2; 
     public int health;
     public List<GameObject> healthUIs;
     public int scroe;
@@ -30,34 +31,54 @@ public class GameManager : MonoBehaviour
     private bool songStarted = false;
 
     public ObjectPool pool;
+    public Camera mainCamera;
+    private int lastWidth;
+    private int lastHeight;
 
     private void Awake()
     {
         health = 5;
         gameOverUI.SetActive(false);
-        double sum = 0.0;
+        /*double sum = 0.0;
         foreach (float value in waitTime)
+        {
+            sum += value;
+            beatTimes.Add(sum);
+        }*/
+    }
+
+    private void LevelShiftTo(float[] level)
+    {
+        beatTimes.Clear();
+        double sum = 0.0;
+        foreach (float value in level)
         {
             sum += value;
             beatTimes.Add(sum);
         }
     }
 
+    void Start()
+    {
+        lastWidth = Screen.width;
+        lastHeight = Screen.height;
+        AdjustCamera();
+    }
+
     public void GameStart()
     {
+        LevelShiftTo(waitTime);
         songStarted = true;
         songStartDspTime = AudioSettings.dspTime;
         audioManager.GameStartSFX();
         audioManager.StartBGM();
         scroe = 0;
-        //StartCoroutine(Spawn());
         startUI.SetActive(false);
         gameOverUI.SetActive(false);
         CreateEchoCircle(this.transform, 15f);
         foreach (GameObject heart in healthUIs)
         { heart.SetActive(true); }
         health = 5;
-
 
         noteIndex = 0;
     }
@@ -78,6 +99,13 @@ public class GameManager : MonoBehaviour
         }
 
         comboUI.SetActive(combo > 0);
+
+        if (Screen.width != lastWidth || Screen.height != lastHeight)
+        {
+            AdjustCamera();
+            lastWidth = Screen.width;
+            lastHeight = Screen.height;
+        }
     }
 
     public void CreateEchoCircle(Transform pos, float speed)
@@ -87,32 +115,6 @@ public class GameManager : MonoBehaviour
         circlePrefab.transform.position = pos.position;
         _echoCircle.expandSpeed = speed;
         //EchoCircle _echoCircle = Instantiate(echoCircle, pos.position, Quaternion.identity).GetComponentInChildren<EchoCircle>();
-    }
-
-    IEnumerator Spawn()
-    {
-        int num = 0;
-        while (true)
-        {
-            if (num < waitTime.Length - 1)
-            {
-                num++;
-                //Debug.Log(num);
-                yield return new WaitForSeconds(waitTime[num]);
-            }
-            else
-            {
-                //Debug.Log("Cleared, Start random wave!");
-                congratUI.SetActive(false);
-                congratUI.SetActive(true);
-                yield return new WaitForSeconds(1.25f);
-                audioManager.StartBGM();
-                StartCoroutine(Spawn());
-                yield break;
-                //yield return new WaitForSecondsRealtime(Random.Range(0.5f, 1.5f));
-            }
-            CreateEchoCircle(poses[Random.Range(0, poses.Length)], 3f);
-        }
     }
 
     public void Hited()
@@ -152,9 +154,22 @@ public class GameManager : MonoBehaviour
                 Debug.Log("restart");
                 songStartDspTime = AudioSettings.dspTime;
                 noteIndex = 0;
+
+                LevelShiftTo(waitTimeLvl2);
                 beatTimes[0] = 1.25f;
                 restarted = true;
             }
+        }
+    }
+    void AdjustCamera()
+    {
+        if (Screen.height > Screen.width) // ÊúÆÁ
+        {
+            mainCamera.fieldOfView = 50f;
+        }
+        else
+        {
+            mainCamera.fieldOfView = 30f;
         }
     }
 }

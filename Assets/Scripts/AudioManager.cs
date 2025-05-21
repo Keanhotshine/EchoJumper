@@ -70,6 +70,7 @@ public class AudioManager : MonoBehaviour
                 }
                 audioPlaying.clip = bgmClips[i];
                 audioPlaying.Play();
+                //yield return new WaitForSeconds(audioPlaying.clip.length - gapTime);
                 yield return new WaitForSecondsRealtime(audioPlaying.clip.length - gapTime);
                 i++;
             }
