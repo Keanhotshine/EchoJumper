@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
 
     private bool songStarted = false;
 
+    public ObjectPool pool;
+
     private void Awake()
     {
         health = 5;
@@ -80,8 +82,11 @@ public class GameManager : MonoBehaviour
 
     public void CreateEchoCircle(Transform pos, float speed)
     {
-        EchoCircle _echoCircle = Instantiate(echoCircle, pos.position, Quaternion.identity).GetComponentInChildren<EchoCircle>();
+        GameObject circlePrefab = pool.Get();
+        EchoCircle _echoCircle = circlePrefab.GetComponentInChildren<EchoCircle>();
+        circlePrefab.transform.position = pos.position;
         _echoCircle.expandSpeed = speed;
+        //EchoCircle _echoCircle = Instantiate(echoCircle, pos.position, Quaternion.identity).GetComponentInChildren<EchoCircle>();
     }
 
     IEnumerator Spawn()

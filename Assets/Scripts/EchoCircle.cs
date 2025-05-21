@@ -9,6 +9,7 @@ public class EchoCircle : MonoBehaviour
     private GameManager gameManager;
     public Material redMat;
     public Material greenMat;
+    public Material whiteMat;
     public LineRenderer circleLine;
 
     private void OnTriggerEnter(Collider other)
@@ -46,7 +47,10 @@ public class EchoCircle : MonoBehaviour
         }
         else
         {
-            Destroy(circle.gameObject);
+            //Destroy(circle.gameObject);
+            gameManager.pool.ReturnToPool(transform.parent.gameObject);
+            circle.radius = 0; transform.localScale = new Vector3(0, transform.localScale.y, 0);
+            circleLine.material = whiteMat;
         }
     }
 }

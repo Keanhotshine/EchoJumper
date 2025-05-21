@@ -113,6 +113,7 @@ MonoBehaviour:
   expandSpeed: 4
   redMat: {fileID: 2100000, guid: c797875ccad0b254ab845d87c542fe9e, type: 2}
   greenMat: {fileID: 2100000, guid: 72875565295e0d54d8d0aa0cd3926f04, type: 2}
+  whiteMat: {fileID: 2100000, guid: 3c9adf27f82166641937cb951117919d, type: 2}
   circleLine: {fileID: 3546101884795791449}
 --- !u!1 &3546101884795791451
 GameObject:
