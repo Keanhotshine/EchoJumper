@@ -16,7 +16,22 @@ public class EchoCircle : MonoBehaviour
     {
         if(expandSpeed!=15)
         {
-            if (other.tag == "Player" && PlayerController.onGround)
+            if (other.CompareTag("Player"))
+            {
+                if(PlayerController.onGround)
+                {
+                    circleLine.material = redMat;
+                    gameManager.Hited();
+                    gameManager.combo = 0;
+                    GameManager.scoreJump = false;
+                }else
+                {
+                    circleLine.material = greenMat;
+                    gameManager.scroe += 1 + gameManager.combo;
+                    GameManager.scoreJump = true;
+                }
+            }
+            /*if (other.tag == "Player" && PlayerController.onGround)
             {
                 circleLine.material = redMat;
                 gameManager.Hited();
@@ -28,7 +43,7 @@ public class EchoCircle : MonoBehaviour
                 circleLine.material = greenMat;
                 gameManager.scroe += 1 + gameManager.combo;
                 GameManager.scoreJump = true;
-            }
+            }*/
         }
     }
     void Awake()
