@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public GameObject startUI;
     public Transform[] poses;
     public float[] waitTime;
-    public float[] waitTimeLvl2; 
+    public float[] waitTimeLvl2;
     public int health;
     public List<GameObject> healthUIs;
     public int scroe;
@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
             sum += value;
             beatTimes.Add(sum);
         }
+        PosesQueue();
     }
 
     void Start()
@@ -93,7 +94,7 @@ public class GameManager : MonoBehaviour
             gameOverUI.SetActive(true);
         }
 
-        if(songStarted)
+        if (songStarted)
         {
             DPSTimer();
         }
@@ -136,9 +137,10 @@ public class GameManager : MonoBehaviour
         {
             if (timeSinceStart >= beatTimes[noteIndex])
             {
-                if(noteIndex != 0)
+                if (noteIndex != 0)
                 {
-                    CreateEchoCircle(poses[Random.Range(0, poses.Length)], 3f);
+                    //CreateEchoCircle(poses[Random.Range(0, poses.Length)], 3f);
+                    CreateEchoCircle(poses[poseQueue[noteIndex]], 3f);
                 }
                 noteIndex++;
             }
@@ -146,7 +148,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if(!restarted)
+            if (!restarted)
             {
                 congratUI.SetActive(false);
                 congratUI.SetActive(true);
@@ -170,6 +172,37 @@ public class GameManager : MonoBehaviour
         else
         {
             mainCamera.fieldOfView = 30f;
+        }
+    }
+
+    public List<int> poseQueue; Queue<int> recentPoses = new Queue<int>();
+    private void PosesQueue()
+    {
+        for (int i = 0; i < beatTimes.Count; i++)
+        {
+            // 构造一个候选池，排除最近的8个
+            List<int> candidateIndices = new List<int>();
+            for (int j = 0; j < poses.Length; j++)
+            {
+                if (!recentPoses.Contains(j))
+                    candidateIndices.Add(j);
+            }
+
+            // 安全判断：如果候选项为空（poses太少），就允许所有
+            if (candidateIndices.Count == 0)
+            {
+                for (int j = 0; j < poses.Length; j++)
+                    candidateIndices.Add(j);
+            }
+
+            // 从候选中随机一个
+            int selectedIndex = candidateIndices[Random.Range(0, candidateIndices.Count)];
+            poseQueue.Add(selectedIndex);
+
+            // 记录最近选过的 pose
+            recentPoses.Enqueue(selectedIndex);
+            if (recentPoses.Count > 8)
+                recentPoses.Dequeue();
         }
     }
 }

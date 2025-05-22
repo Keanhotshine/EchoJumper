@@ -12,14 +12,17 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     public Animator animator; public string currentAniName;
     public GameManager gameManager;
+    public GameObject shadow;
 
     void Start()
     {
         hitGround = true;
         characterController = GetComponent<CharacterController>();
     }
-    private void Update()
+    void Update()
     {
+        //shadow.transform.localScale = new Vector3( Mathf.Clamp(transform.position.y - 0.5f,1f,1.5f), 1f, 0.09f * Mathf.Clamp(transform.position.y - 0.5f, 1f, 1.5f));
+        shadow.transform.localScale = new Vector3(0.09f * 1 / (transform.position.y * 1.1f), 1f, 0.09f * 1 / (transform.position.y * 1.1f));
         onGround = Physics.CheckSphere(groundCheck.position, groundDistance, groudMask);
         if (animator.GetCurrentAnimatorClipInfo(0).Length >= 1)
         {
